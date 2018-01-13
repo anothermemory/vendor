@@ -5,4 +5,4 @@ RUN cd /am && \
     glide install --force --v && \
     mv /am/vendor/* /go/src && \
     cd /go/src && \
-    RUN rm -rf ./am
+    rm -rf ./am
