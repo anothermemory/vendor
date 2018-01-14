@@ -1,4 +1,4 @@
-FROM anothermemory/go-base
+FROM am-registry:5000/anothermemory/go-base
 
 ADD glide.* /am/
 RUN cd /am && \
