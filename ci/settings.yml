@@ -1,0 +1,5 @@
+---
+meta:
+  name:   "go_vendor"
+  github:
+    repo: "vendor"

@@ -1,0 +1,89 @@
+# DO NOT MAKE CHANGES TO THIS FILE.  Instead, modify
+# ci/settings.yml and override what needs overridden.
+# This uses spruce, so you have some options there.
+---
+meta:
+  name:     (( param "Please name your pipeline" ))
+  pipeline: (( grab meta.name ))
+  target:   "am"
+
+  git:
+    email:  "<>"
+    name:   "CI Bot"
+
+  docker:
+    registry: am-registry:5000
+    image_prefix: (( concat meta.docker.registry "/anothermemory/" ))
+
+  github:
+    uri:          (( concat "git@github.com:" meta.github.owner "/" meta.github.repo ))
+    owner:        "anothermemory"
+    repo:         (( param "Please specify the name of the Github repository" ))
+    private_key:  ((git_private_key))
+    access_token: ((git_access_token))
+
+resources:
+- name: git-develop
+  type: git
+  check_every: 15s
+  source:
+    uri: (( grab meta.github.uri ))
+    branch: develop
+    private_key: (( grab meta.github.private_key ))
+
+- name: git-master
+  type: git
+  check_every: 15s
+  source:
+    uri: (( grab meta.github.uri ))
+    branch: master
+    private_key: (( grab meta.github.private_key ))
+
+- name: docker-image-go-base-develop
+  type: docker-image
+  check_every: 15s
+  source:
+    repository: (( concat meta.docker.image_prefix "go-base" ))
+    tag: develop
+    insecure_registries: [ (( grab meta.docker.registry )) ]
+
+- name: docker-image-go-base-master
+  type: docker-image
+  check_every: 15s
+  source:
+    repository: (( concat meta.docker.image_prefix "go-base" ))
+    tag: master
+    insecure_registries: [ (( grab meta.docker.registry )) ]
+
+- name: docker-image-go-vendor-develop
+  type: docker-image
+  check_every: 15s
+  source:
+    repository: (( concat meta.docker.image_prefix "go-vendor" ))
+    tag: develop
+    insecure_registries: [ (( grab meta.docker.registry )) ]
+
+- name: docker-image-go-vendor-master
+  type: docker-image
+  check_every: 15s
+  source:
+    repository: (( concat meta.docker.image_prefix "go-vendor" ))
+    tag: master
+    insecure_registries: [ (( grab meta.docker.registry )) ]
+
+
+jobs:
+- name: build-go-vendor-develop
+  serial: true
+  plan:
+  - aggregate:
+    - { get: docker-image-go-base-develop, trigger: true, params: { skip_download: true} }
+    - { get: git-develop, trigger: true }
+  - { put:  docker-image-go-vendor-develop, params: { build: git-develop/ci/docker} }
+- name: build-go-vendor-master
+  serial: true
+  plan:
+  - aggregate:
+    - { get: docker-image-go-base-master, trigger: true, params: { skip_download: true} }
+    - { get: git-master, trigger: true }
+  - { put:  docker-image-go-vendor-master, params: { build: git-master/ci/docker} }
