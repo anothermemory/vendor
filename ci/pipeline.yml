@@ -74,12 +74,14 @@ resources:
 
 jobs:
 - name: build-go-vendor-develop
+  serial: true
   plan:
   - aggregate:
     - { get: docker-image-go-base-develop, trigger: true, params: { skip_download: true} }
     - { get: git-develop, trigger: true }
   - { put:  docker-image-go-vendor-develop, params: { build: git-develop} }
 - name: build-go-vendor-master
+  serial: true
   plan:
   - aggregate:
     - { get: docker-image-go-base-master, trigger: true, params: { skip_download: true} }
