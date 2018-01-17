@@ -79,11 +79,11 @@ jobs:
   - aggregate:
     - { get: docker-image-go-base-develop, trigger: true, params: { skip_download: true} }
     - { get: git-develop, trigger: true }
-  - { put:  docker-image-go-vendor-develop, params: { build: git-develop/ci/docker} }
+  - { put:  docker-image-go-vendor-develop, params: { build: git-develop} }
 - name: build-go-vendor-master
   serial: true
   plan:
   - aggregate:
     - { get: docker-image-go-base-master, trigger: true, params: { skip_download: true} }
     - { get: git-master, trigger: true }
-  - { put:  docker-image-go-vendor-master, params: { build: git-master/ci/docker} }
+  - { put:  docker-image-go-vendor-master, params: { build: git-master} }
