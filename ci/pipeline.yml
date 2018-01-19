@@ -22,55 +22,49 @@ meta:
     private_key:  ((git_private_key))
     access_token: ((git_access_token))
 
+  resource:
+    git:
+      type: git
+      check_every: 15s
+      source:
+        uri: (( grab meta.github.uri ))
+        private_key: (( grab meta.github.private_key ))
+        branch: master
+    dockerimage:
+      base:
+        type: docker-image
+        check_every: 15s
+        source:
+          tag: master
+          insecure_registries: [ (( grab meta.docker.registry )) ]
+      go-base:
+        .: (( inject meta.resource.dockerimage.base ))
+        source: { repository: (( concat meta.docker.image_prefix "go-base" )) }
+      go-vendor:
+        .: (( inject meta.resource.dockerimage.base ))
+        source: { repository: (( concat meta.docker.image_prefix "go-vendor" )) }
+
 resources:
 - name: git-develop
-  type: git
-  check_every: 15s
-  source:
-    uri: (( grab meta.github.uri ))
-    branch: develop
-    private_key: (( grab meta.github.private_key ))
+  .: (( inject meta.resource.git ))
+  source: { branch: develop}
 
 - name: git-master
-  type: git
-  check_every: 15s
-  source:
-    uri: (( grab meta.github.uri ))
-    branch: master
-    private_key: (( grab meta.github.private_key ))
+  .: (( inject meta.resource.git ))
 
 - name: docker-image-go-base-develop
-  type: docker-image
-  check_every: 15s
-  source:
-    repository: (( concat meta.docker.image_prefix "go-base" ))
-    tag: develop
-    insecure_registries: [ (( grab meta.docker.registry )) ]
+  .: (( inject meta.resource.dockerimage.go-base ))
+  source: { tag: develop}
 
 - name: docker-image-go-base-master
-  type: docker-image
-  check_every: 15s
-  source:
-    repository: (( concat meta.docker.image_prefix "go-base" ))
-    tag: master
-    insecure_registries: [ (( grab meta.docker.registry )) ]
+  .: (( inject meta.resource.dockerimage.go-base ))
 
 - name: docker-image-go-vendor-develop
-  type: docker-image
-  check_every: 15s
-  source:
-    repository: (( concat meta.docker.image_prefix "go-vendor" ))
-    tag: develop
-    insecure_registries: [ (( grab meta.docker.registry )) ]
+  .: (( inject meta.resource.dockerimage.go-vendor ))
+  source: { tag: develop}
 
 - name: docker-image-go-vendor-master
-  type: docker-image
-  check_every: 15s
-  source:
-    repository: (( concat meta.docker.image_prefix "go-vendor" ))
-    tag: master
-    insecure_registries: [ (( grab meta.docker.registry )) ]
-
+  .: (( inject meta.resource.dockerimage.go-vendor ))
 
 jobs:
 - name: build-go-vendor-develop
