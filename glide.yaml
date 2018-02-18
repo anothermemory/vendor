@@ -28,3 +28,30 @@ import:
   version: ^1.0.0
   subpackages:
   - protoc-gen-go
+- package: github.com/spf13/cobra
+  subpackages:
+  - cobra
+- package: github.com/spf13/viper
+- package: github.com/mitchellh/go-homedir
+- package: github.com/spf13/pflag
+- package: github.com/fsnotify/fsnotify
+  version: ^1.4.7
+- package: github.com/hashicorp/hcl
+  subpackages:
+  - hcl/printer
+- package: github.com/magiconair/properties
+  version: ^1.7.4
+- package: github.com/mitchellh/mapstructure
+- package: github.com/pelletier/go-toml
+  version: ^1.1.0
+- package: github.com/spf13/cast
+  version: ^1.1.0
+- package: github.com/spf13/jwalterweatherman
+- package: gopkg.in/yaml.v2
+- package: golang.org/x/sys
+  subpackages:
+  - unix
+- package: github.com/cpuguy83/go-md2man
+  version: ^1.0.7
+  subpackages:
+  - md2man
